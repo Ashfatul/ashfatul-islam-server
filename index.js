@@ -20,9 +20,16 @@ const client = new MongoClient(uri, {
 async function run() {
    const database = client.db("AshfatulDB");
    const projects = database.collection("Projects");
+   const user = database.collection("user");
    try {
       app.get("/", (req, res) => {
          res.send("Project Server Is Running");
+      });
+
+      app.get("/user", async (req, res) => {
+         const query = { role: "admin" };
+         const data = await user.findOne(query);
+         res.send(data);
       });
 
       app.post("/projects", async (req, res) => {
@@ -43,10 +50,12 @@ async function run() {
 
       app.get("/projects", async (req, res) => {
          const max = parseInt(req.query.limit);
+         const skipProject = parseInt(req.query.skip);
          const result = await projects
             .find()
             .sort({ date: -1 })
             .limit(max)
+            .skip(skipProject)
             .toArray();
          res.send(result);
       });
@@ -55,6 +64,14 @@ async function run() {
          const id = req.params.id;
          const query = { _id: new ObjectId(id) };
          const result = projects.deleteOne(query);
+         res.send(result);
+      });
+
+      app.patch("/update-user-profile", async (req, res) => {
+         const data = req.body;
+         const options = { upsert: true };
+         const query = { role: "admin" };
+         const result = await user.updateOne(query, { $set: data }, options);
          res.send(result);
       });
 
