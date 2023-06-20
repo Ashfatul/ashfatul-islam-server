@@ -21,6 +21,7 @@ async function run() {
    const database = client.db("AshfatulDB");
    const projects = database.collection("Projects");
    const user = database.collection("user");
+   const social = database.collection("social");
    try {
       app.get("/", (req, res) => {
          res.send("Project Server Is Running");
@@ -72,6 +73,20 @@ async function run() {
          const options = { upsert: true };
          const query = { role: "admin" };
          const result = await user.updateOne(query, { $set: data }, options);
+         res.send(result);
+      });
+
+      app.patch("/social-links", async (req, res) => {
+         const data = req.body;
+         const options = { upsert: true };
+         const query = { role: "links" };
+         const result = await social.updateOne(query, { $set: data }, options);
+         res.send(result);
+      });
+
+      app.get("/social-links", async (req, res) => {
+         const query = { role: "links" };
+         const result = await social.findOne(query);
          res.send(result);
       });
 
