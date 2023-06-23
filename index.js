@@ -130,6 +130,13 @@ async function run() {
          res.send(result);
       });
 
+      app.delete("/skills/delete/:id", async (req, res) => {
+         const id = req.params.id;
+         const query = { _id: new ObjectId(id) };
+         const result = await skills.deleteOne(query);
+         res.send(result);
+      });
+
       app.put("/update-project/:id", async (req, res) => {
          const id = req.params.id;
          const data = req.body;
