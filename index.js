@@ -22,6 +22,8 @@ async function run() {
    const projects = database.collection("Projects");
    const user = database.collection("user");
    const social = database.collection("social");
+   const skillsCategory = database.collection("skillsCategory");
+   const skills = database.collection("skills");
    try {
       app.get("/", (req, res) => {
          res.send("Project Server Is Running");
@@ -96,6 +98,38 @@ async function run() {
          const result = await projects.findOne(query);
          res.send(result);
       });
+
+      app.get("/skills-category", async (req, res) => {
+         const sortBy = { order: 1 };
+         const result = await skillsCategory.find().sort(sortBy).toArray();
+         res.send(result);
+      });
+
+      app.post("/skills-category", async (req, res) => {
+         const data = req.body;
+         const result = skillsCategory.insertOne(data);
+         res.send(result);
+      });
+
+      app.delete("/skills-category/delete/:id", async (req, res) => {
+         const id = req.params.id;
+         const query = { _id: new ObjectId(id) };
+         const result = skillsCategory.deleteOne(query);
+         res.send(result);
+      });
+
+      app.post("/add-skill", async (req, res) => {
+         const data = req.body;
+         const result = skills.insertOne(data);
+         res.send(result);
+      });
+
+      app.get("/skills", async (req, res) => {
+         const sortBy = { order: 1 };
+         const result = await skills.find().sort(sortBy).toArray();
+         res.send(result);
+      });
+
       app.put("/update-project/:id", async (req, res) => {
          const id = req.params.id;
          const data = req.body;
