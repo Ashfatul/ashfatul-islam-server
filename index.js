@@ -105,6 +105,14 @@ async function run() {
          res.send(result);
       });
 
+      app.get("/skills/category/:id", async (req, res) => {
+         const id = req.params.id;
+         const query = { parentCategoryID: id };
+         const sortBy = { order: 1 };
+         const result = await skills.find(query).sort(sortBy).toArray();
+         res.send(result);
+      });
+
       app.post("/skills-category", async (req, res) => {
          const data = req.body;
          const result = skillsCategory.insertOne(data);
